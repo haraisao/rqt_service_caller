@@ -38,7 +38,7 @@ import time
 
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import Qt, Slot, qWarning
-from python_qt_binding.QtGui import QIcon
+from python_qt_binding.QtGui import QIcon, QPixmap
 from python_qt_binding.QtWidgets import QMenu, QTreeWidgetItem, QWidget
 
 import rospkg
@@ -67,8 +67,8 @@ class ServiceCallerWidget(QWidget):
         rp = rospkg.RosPack()
         ui_file = os.path.join(rp.get_path('rqt_service_caller'), 'resource', 'ServiceCaller.ui')
         loadUi(ui_file, self, {'ExtendedComboBox': ExtendedComboBox})
-        self.refresh_services_button.setIcon(QIcon.fromTheme('view-refresh'))
-        self.call_service_button.setIcon(QIcon.fromTheme('call-start'))
+        self.refresh_services_button.setIcon(QIcon.fromTheme('view-refresh', self.getPixmapIcon('view-refresh')))
+        self.call_service_button.setIcon(QIcon.fromTheme('call-start', get.getPixmapIcon('call-start')))
 
         self._column_index = {}
         for column_name in self.column_names:
@@ -78,6 +78,11 @@ class ServiceCallerWidget(QWidget):
         self.on_refresh_services_button_clicked()
 
         self.request_tree_widget.itemChanged.connect(self.request_tree_widget_itemChanged)
+
+    def getPixmapIcon(self, name):
+        rp=rospkg.RosPack()
+        icon_file = os.path.join(rp.get_path('rqt_gui'), 'resource', 'icons', name+'.png')
+        return QIcon(QPixmap(icon_file))
 
     def save_settings(self, plugin_settings, instance_settings):
         instance_settings.set_value('current_service_name', self._service_info['service_name'])
@@ -302,8 +307,8 @@ class ServiceCallerWidget(QWidget):
 
         # show context menu
         menu = QMenu(self)
-        action_item_expand = menu.addAction(QIcon.fromTheme('zoom-in'), "Expand All Children")
-        action_item_collapse = menu.addAction(QIcon.fromTheme('zoom-out'), "Collapse All Children")
+        action_item_expand = menu.addAction(QIcon.fromTheme('zoom-in'get.getPixmapIcon('zoom-in')), "Expand All Children")
+        action_item_collapse = menu.addAction(QIcon.fromTheme('zoom-out'get.getPixmapIcon('zoom-out')), "Collapse All Children")
         action = menu.exec_(global_pos)
 
         # evaluate user action
